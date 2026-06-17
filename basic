@@ -1,0 +1,24 @@
+a= 30
+b= 40
+sum= a+b
+sub=a-b
+div=a%b
+mul=a*b
+print(sum,sub,div,mul)
+#relation
+g=a>b
+s=a<b
+e= a==b
+n= a!=b
+print(g,s,e,n)
+#assinment
+x=5
+x+=5
+x*=2
+print(x)
+#logical
+a=True
+b=False
+print(a and b)
+print(a or b)
+print(not a)

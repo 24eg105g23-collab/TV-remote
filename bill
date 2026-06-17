@@ -1,0 +1,11 @@
+s = input("enter the string:")
+n= len(s)
+mid=n//2
+if n%2==0:
+    first = s[:mid]
+    secound=s[mid:]
+else:
+    first = s[:mid]
+    secound=s[mid:]
+    print("first half:",first)
+    print("secound half:",secound)

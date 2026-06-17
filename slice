@@ -1,0 +1,8 @@
+class Student:
+ name="k.vasu"
+ sec="cse-g"
+ rollno=23
+obj= Student()
+print(obj.name)
+print(obj.sec)
+print(obj.rollno)

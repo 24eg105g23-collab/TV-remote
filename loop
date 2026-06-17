@@ -1,0 +1,6 @@
+RS10 = int(input("Enter 10rs coin:"))
+RS5 = int(input("Enter 5rs coin:"))
+RS2 = int(input("Enter 2rs coin:"))
+RS1 = int(input("Enter 1rs coin:"))
+total=RS10*10+RS5*5+RS2*2+RS1*1
+print("total:",total)
