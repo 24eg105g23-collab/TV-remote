@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TV Remote</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#bdbdbd;
+    font-family:Arial,sans-serif;
+}
+.remote{
+    width:220px;
+    background:#111;
+    border-radius:40px;
+    padding:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.5);
+}
+button{
+    border:none;
+    cursor:pointer;
+    color:#fff;
+    background:#333;
+}
+.power{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    color:red;
+    font-size:24px;
+    display:block;
+    margin:auto;
+}
+.numbers{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:10px;
+}
+.numbers button{
+    height:40px;
+    border-radius:20px;
+    font-size:18px;
+}
+.controls{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:15px;
+}
+.controls button{
+    height:45px;
+    border-radius:20px;
+}
+.home-row{
+    display:flex;
+    justify-content:space-between;
+    margin:15px 0;
+}
+.home-row button{
+    width:80px;
+    height:40px;
+    border-radius:20px;
+}
+.nav-ring{
+    width:130px;
+    height:130px;
+    margin:15px auto;
+    border-radius:50%;
+    background:#222;
+    position:relative;
+}
+.center{
+    position:absolute;
+    top:40px;
+    left:40px;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    background:#555;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    font-weight:bold;
+}
+.bottom{
+    display:flex;
+    justify-content:space-between;
+}
+.bottom button{
+    width:80px;
+    height:40px;
+    border-radius:20px;
+}
+.apps{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-top:15px;
+}
+.apps button{
+    height:35px;
+    border-radius:8px;
+    background:#222;
+}
+.netflix{
+    color:red;
+    font-weight:bold;
+}
+.brand{
+    text-align:center;
+    color:white;
+    font-size:28px;
+    letter-spacing:3px;
+    margin-top:20px;
+}
+button:hover{
+    background:#555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="remote">
+
+<button class="power">⏻</button>
+
+<div class="numbers">
+<button>1</button><button>2</button><button>3</button>
+<button>4</button><button>5</button><button>6</button>
+<button>7</button><button>8</button><button>9</button>
+<button>-M</button><button>0</button><button>REP</button>
+</div>
+
+<div class="controls">
+<button>+</button>
+<button>🔇</button>
+<button>▲</button>
+<button>−</button>
+<button>☰</button>
+<button>▼</button>
+</div>
+
+<div class="home-row">
+<button>⌂</button>
+<button>INPUT</button>
+</div>
+
+<div class="nav-ring">
+<div class="center">OK</div>
+</div>
+
+<div class="bottom">
+<button>EXIT</button>
+<button>⚙</button>
+</div>
+
+<div class="apps">
+<button class="netflix">NETFLIX</button>
+<button>Prime Video</button>
+<button>Hotstar</button>
+<button>YouTube</button>
+<button>Miracast</button>
+<button>App Store</button>
+</div>
+
+<div class="brand">CELLECOR</div>
+
+</div>
+
+<!-- Display Screen -->
+<div id="screen"></div>
+
+<script>
+// TV Remote Controller
+class TVRemote {
+    constructor() {
+        this.power = false;
+        this.channel = 1;
+        this.volume = 50;
+        this.currentApp = null;
+        this.apps = ['Netflix', 'Prime Video', 'Hotstar', 'YouTube', 'Miracast', 'App Store'];
+        this.init();
+    }
+
+    init() {
+        this.attachEventListeners();
+        this.updateDisplay();
+    }
+
+    attachEventListeners() {
+        // Power button
+        document.querySelector('.power').addEventListener('click', () => this.togglePower());
+
+        // Number buttons (1-9)
+        document.querySelectorAll('.numbers button').forEach((btn, index) => {
+            if (index < 9) {
+                btn.addEventListener('click', () => {
+                    if (this.power) this.changeChannel(index + 1);
+                });
+            }
+        });
+
+        // 0 button
+        document.querySelectorAll('.numbers button')[10].addEventListener('click', () => {
+            if (this.power) this.changeChannel(0);
+        });
+
+        // Volume control
+        document.querySelectorAll('.controls button')[0].addEventListener('click', () => {
+            if (this.power) this.changeVolume(5);
+        });
+        document.querySelectorAll('.controls button')[2].addEventListener('click', () => {
+            if (this.power) this.changeVolume(5);
+        });
+        document.querySelectorAll('.controls button')[3].addEventListener('click', () => {
+            if (this.power) this.changeVolume(-5);
+        });
+        document.querySelectorAll('.controls button')[5].addEventListener('click', () => {
+            if (this.power) this.changeVolume(-5);
+        });
+
+        // Mute button
+        document.querySelectorAll('.controls button')[1].addEventListener('click', () => {
+            if (this.power) this.toggleMute();
+        });
+
+        // Menu button
+        document.querySelectorAll('.controls button')[4].addEventListener('click', () => {
+            if (this.power) this.showMenu();
+        });
+
+        // Home button
+        document.querySelector('.home-row button').addEventListener('click', () => {
+            if (this.power) this.goHome();
+        });
+
+        // Input button
+        document.querySelectorAll('.home-row button')[1].addEventListener('click', () => {
+            if (this.power) this.changeInput();
+        });
+
+        // OK button
+        document.querySelector('.center').addEventListener('click', () => {
+            if (this.power) this.selectOption();
+        });
+
+        // Exit button
+        document.querySelector('.bottom button').addEventListener('click', () => {
+            if (this.power) this.exit();
+        });
+
+        // Settings button
+        document.querySelectorAll('.bottom button')[1].addEventListener('click', () => {
+            if (this.power) this.openSettings();
+        });
+
+        // App buttons
+        document.querySelectorAll('.apps button').forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                if (this.power) this.launchApp(btn.textContent);
+            });
+        });
+    }
+
+    togglePower() {
+        this.power = !this.power;
+        this.updateDisplay();
+        console.log(`TV is now ${this.power ? 'ON' : 'OFF'}`);
+    }
+
+    changeChannel(ch) {
+        this.channel = ch;
+        this.updateDisplay();
+        console.log(`Channel changed to: ${this.channel}`);
+    }
+
+    changeVolume(amount) {
+        this.volume = Math.max(0, Math.min(100, this.volume + amount));
+        this.updateDisplay();
+        console.log(`Volume: ${this.volume}%`);
+    }
+
+    toggleMute() {
+        this.volume = this.volume === 0 ? 50 : 0;
+        this.updateDisplay();
+        console.log(`Mute: ${this.volume === 0 ? 'ON' : 'OFF'}`);
+    }
+
+    showMenu() {
+        console.log('Menu opened');
+        alert('Menu Options:\n1. Settings\n2. Display\n3. Sound\n4. Network');
+    }
+
+    goHome() {
+        this.currentApp = null;
+        this.updateDisplay();
+        console.log('Home screen');
+    }
+
+    changeInput() {
+        const inputs = ['HDMI 1', 'HDMI 2', 'USB', 'AV'];
+        const currentInput = inputs[Math.floor(Math.random() * inputs.length)];
+        console.log(`Input changed to: ${currentInput}`);
+        alert(`Input: ${currentInput}`);
+    }
+
+    selectOption() {
+        console.log('Option selected');
+    }
+
+    exit() {
+        this.currentApp = null;
+        this.updateDisplay();
+        console.log('Exited app');
+    }
+
+    openSettings() {
+        console.log('Settings opened');
+        alert('Settings:\nBrightness\nContrast\nColor\nResolution');
+    }
+
+    launchApp(appName) {
+        this.currentApp = appName;
+        this.updateDisplay();
+        console.log(`Launching: ${appName}`);
+    }
+
+    updateDisplay() {
+        const screen = document.getElementById('screen');
+        if (!this.power) {
+            screen.textContent = '';
+            screen.style.display = 'none';
+        } else {
+            screen.style.display = 'block';
+            let displayText = `📺 TV ON\n\nChannel: ${this.channel}\nVolume: ${this.volume}%`;
+            if (this.currentApp) {
+                displayText += `\n\nApp: ${this.currentApp}`;
+            }
+            screen.textContent = displayText;
+        }
+    }
+}
+
+// Initialize Remote
+const remote = new TVRemote();
+</script>
+
+<style>
+#screen {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1a1a1a;
+    color: #00ff00;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    min-width: 200px;
+    white-space: pre;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    display: none;
+}
+</style>
+
+</body>
+</html>
